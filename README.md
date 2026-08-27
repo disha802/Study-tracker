@@ -81,6 +81,7 @@ rather than of the person.
 | `style.css` | Design tokens and the semester view |
 | `app.js` | Semester state, rendering, backup, dock, theme |
 | `profiles.js` / `profiles.css` | Profile namespacing and the switcher chip |
+| `sync.js` / `sync.css` | Optional GitHub Gist sync and its settings sheet |
 | `placement.js` / `placement.css` | Placement view logic and styling |
 | `placement-data.js` | DSA and SQL topic banks |
 | `placement-cards.js` | Flashcard decks |
@@ -98,3 +99,38 @@ data, the activity heatmap and the full placement state. Import restores into
 whichever profile is currently active. Reset clears only the active profile.
 
 Export before clearing site data — `localStorage` goes with it.
+
+---
+
+## Sync across devices (optional)
+
+**Backup → Sync** keeps a profile in a secret GitHub Gist, so the same data
+opens on every device.
+
+1. Create a token at
+   [github.com/settings/tokens/new?scopes=gist](https://github.com/settings/tokens/new?scopes=gist)
+   with the **`gist` scope ticked and nothing else**.
+2. Open the tracker, click **Sync**, paste the token, hit **Connect**.
+3. On any other device, paste the same token. It finds the existing gist for
+   that profile and pulls it down — it does not create a second one.
+
+Saves are pushed automatically about five seconds after you stop editing, and
+again when you leave the tab. The dot on the profile chip shows the state:
+grey off, amber unsaved, blue syncing, green synced, red needs attention.
+
+**Conflicts are never resolved silently.** Before every push the tracker checks
+whether the gist changed elsewhere. If it did, syncing pauses and you pick which
+copy to keep — nothing is overwritten until you choose.
+
+Each profile connects separately, so Amigo and Spidey use their own tokens and
+their own gists.
+
+### What this costs you
+
+- The token is stored in that browser's `localStorage`, in plain text. It is
+  sent to `api.github.com` and nowhere else, and never enters this repo — but
+  anyone with access to the browser can read it. Revoke it on GitHub if a
+  machine is lost.
+- **Secret gists are unlisted, not private.** Anyone holding the URL can read
+  the contents, so keep anything genuinely sensitive out of your notes.
+- The `gist` scope cannot touch your repositories.

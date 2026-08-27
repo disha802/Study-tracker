@@ -99,6 +99,12 @@ function persist(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   markActivity();
   flashSaved();
+  notifyChanged();
+}
+
+// sync.js listens on this; absent when sync is not loaded
+function notifyChanged(){
+  if(window.__constellationChanged) window.__constellationChanged();
 }
 
 function flashSaved(){
@@ -676,34 +682,40 @@ document.getElementById("importBtn").addEventListener("click", function(){
   document.getElementById("importFile").click();
 });
 
+// Restore a backup payload into the ACTIVE profile. Shared by file import and
+// by sync.js pulling from a gist. Throws on an unrecognised shape.
+function applyBackup(parsed){
+  var incoming;
+  if(parsed && parsed.__constellation >= 2){
+    if(!parsed.tracker) throw new Error("missing tracker");
+    incoming = parsed.tracker;
+    if(parsed.activity) localStorage.setItem(ACTIVITY_KEY, JSON.stringify(parsed.activity));
+    var exts = window.__constellationExtensions || {};
+    Object.keys(exts).forEach(function(k){
+      if(parsed.extensions && parsed.extensions[k]){
+        try{ exts[k].load(parsed.extensions[k]); }catch(err){ console.warn("Could not import extension "+k, err); }
+      }
+    });
+  }else{
+    if(!parsed || !parsed.theory || !parsed.labs) throw new Error("unrecognised shape");
+    incoming = parsed;
+  }
+  SUBJECTS.forEach(function(s){
+    incoming.theory[s.key] = reconcile(incoming.theory[s.key] || {items:[]}, THEORY_LABELS);
+    incoming.labs[s.key]   = reconcile(incoming.labs[s.key]   || {items:[]}, LAB_LABELS);
+  });
+  data = incoming; lastOverall = -1; setSel(null);
+  persist(); renderAll();
+  if(window.__placementRender) window.__placementRender();
+}
+
 document.getElementById("importFile").addEventListener("change", function(e){
   var file = e.target.files[0];
   if(!file) return;
   var reader = new FileReader();
   reader.onload = function(){
     try{
-      var parsed = JSON.parse(reader.result), incoming;
-      if(parsed && parsed.__constellation >= 2){
-        if(!parsed.tracker) throw new Error("missing tracker");
-        incoming = parsed.tracker;
-        if(parsed.activity) localStorage.setItem(ACTIVITY_KEY, JSON.stringify(parsed.activity));
-        var exts = window.__constellationExtensions || {};
-        Object.keys(exts).forEach(function(k){
-          if(parsed.extensions && parsed.extensions[k]){
-            try{ exts[k].load(parsed.extensions[k]); }catch(err){ console.warn("Could not import extension "+k, err); }
-          }
-        });
-      }else{
-        if(!parsed || !parsed.theory || !parsed.labs) throw new Error("unrecognised shape");
-        incoming = parsed;
-      }
-      SUBJECTS.forEach(function(s){
-        incoming.theory[s.key] = reconcile(incoming.theory[s.key] || {items:[]}, THEORY_LABELS);
-        incoming.labs[s.key]   = reconcile(incoming.labs[s.key]   || {items:[]}, LAB_LABELS);
-      });
-      data = incoming; lastOverall = -1; setSel(null);
-      persist(); renderAll();
-      if(window.__placementRender) window.__placementRender();
+      applyBackup(JSON.parse(reader.result));
     }catch(err){
       alert("That file doesn't look like a valid backup.");
     }
@@ -845,6 +857,13 @@ var syncDock = (function(){
 /* ============================================================ extension hook */
 window.__constellationTouch = function(){
   markActivity(); flashSaved(); renderHeatmap(); renderSpark();
+  notifyChanged();
+};
+
+// consumed by sync.js
+window.__constellationData = {
+  build: buildBackup,
+  apply: applyBackup
 };
 
 /* ============================================================ init */
