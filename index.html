@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Tracker — Semester VII</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="placement.css?v=5">
+<link rel="stylesheet" href="profiles.css?v=5">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem("constellation.theme.v1");
+    if(t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+
+<div class="who" id="who"></div>
+
+<main>
+<section id="view-semester" class="view active">
+  <div class="shell">
+    <div class="bento" id="bento">
+
+      <!-- ============ OVERVIEW ============ -->
+      <section class="tile hero no-tilt" id="overview" style="--i:0">
+        <div class="spark" id="spark" aria-hidden="true"></div>
+        <span class="t-label">Semester VII &middot; Live tracker</span>
+        <h1 id="title" aria-label="Semester VII"></h1>
+        <p class="t-sub">Theory, labs and the major project on one sheet &mdash; read by <b>how far each piece has actually moved</b>.</p>
+        <div class="facts">
+          <span class="fact" id="factItems">50 items</span>
+          <span class="fact">3 subjects</span>
+          <span class="fact" id="factStreak">0 day streak</span>
+        </div>
+      </section>
+
+      <aside class="tile ident" id="spotlight" style="--i:1"></aside>
+
+      <section class="tile index wide" data-streak="bottom" style="--i:2">
+        <span class="t-label">Progress index</span>
+        <div class="head">
+          <span class="big" id="pct">0%</span>
+          <span class="t-sub" id="idxSub">of items complete</span>
+        </div>
+        <div class="meter" id="meter" role="img" aria-label="Share of items done, in progress and not started">
+          <i class="m-c"></i><i class="m-i"></i><i class="m-u"></i>
+        </div>
+        <div class="keys">
+          <button class="key" data-k="done" aria-pressed="false"><span class="sw"></span><span class="n" data-n="done">0</span> Done</button>
+          <button class="key" data-k="progress" aria-pressed="false"><span class="sw"></span><span class="n" data-n="progress">0</span> In progress</button>
+          <button class="key" data-k="todo" aria-pressed="false"><span class="sw"></span><span class="n" data-n="todo">0</span> Not started</button>
+        </div>
+        <p class="t-sub push" style="font-size:.78rem; color:var(--faint);">Hover a key to isolate those items across the page.</p>
+      </section>
+
+      <!-- ============ SUMMARIES ============ -->
+      <section class="tile sum" id="tileTheory"  style="--c:4; --t:var(--sage);  --i:3"></section>
+      <section class="tile sum" id="tileLabs"    style="--c:4; --t:var(--blue);  --i:4"></section>
+      <section class="tile sum" id="tileProject" style="--c:4; --t:var(--amber); --i:5"></section>
+
+      <!-- ============ THE SHEET ============ -->
+      <section class="tile items no-tilt" id="items" data-streak="top" style="--i:6">
+        <span class="t-label">Every item</span>
+        <h2 class="t-title">Click to cycle &middot; arrows move &middot; space cycles</h2>
+        <div class="grids" id="grids"></div>
+      </section>
+
+      <section class="tile detail no-tilt" id="detail" style="--i:7"></section>
+
+      <!-- ============ ACTIVITY ============ -->
+      <section class="tile act" id="activity" style="--i:8">
+        <span class="t-label">Activity &middot; last 12 weeks</span>
+        <h2 class="t-title"><span id="streakCount">0</span> day streak</h2>
+        <div class="activity-heatmap" id="activityHeatmap"></div>
+        <p class="t-sub push" style="font-size:.78rem; color:var(--faint);"><b id="doneCount">0</b> of <span id="totalCount">0</span> items complete.</p>
+      </section>
+
+      <section class="tile actions" style="--i:9">
+        <span class="t-label">Backup</span>
+        <div class="qa-row">
+          <button class="qa" id="exportBtn">
+            <i><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></i>
+            <span>Export</span>
+          </button>
+          <button class="qa" id="importBtn">
+            <i><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M4 21h16"/></svg></i>
+            <span>Import</span>
+          </button>
+          <input type="file" id="importFile" hidden accept="application/json">
+          <button class="qa danger" id="resetBtn">
+            <i><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></i>
+            <span>Reset</span>
+          </button>
+        </div>
+        <span class="saved-flash" id="savedFlash">Saved</span>
+      </section>
+
+    </div>
+
+    <footer>
+      <p>Stored locally in this browser &mdash; nothing leaves your machine. Export a backup before clearing site data.</p>
+    </footer>
+  </div>
+</section>
+
+<section id="tab-placement" class="view"></section>
+</main>
+
+<nav class="dock" id="dock" aria-label="Sections">
+  <div class="ind" id="ind"></div>
+  <button data-go="overview" class="on"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20H4v-9.5Z"/></svg><span>Overview</span></button>
+  <button data-go="items"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 9.5h17M8 5v4.5"/></svg><span>Items</span></button>
+  <button data-go="activity"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"><path d="M4 19h16"/><path d="M7 19v-6M12 19V7M17 19v-9"/></svg><span>Activity</span></button>
+  <button data-mode="placement"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"><path d="M4 7h16v13H4zM9 7V4h6v3"/></svg><span>Placement</span></button>
+</nav>
+
+<div class="toast" id="magicToast"></div>
+
+<script src="profiles.js?v=5"></script>
+<script src="placement-data.js?v=5"></script>
+<script src="placement-cards.js?v=5"></script>
+<script src="placement-sheets.js?v=5"></script>
+<script src="app.js?v=5"></script>
+<script src="placement.js?v=5"></script>
+</body>
+</html>

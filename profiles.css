@@ -1,0 +1,135 @@
+/* ==========================================================
+   profiles.css — the profile switcher chip (top right)
+   Uses the tokens from style.css.
+   ========================================================== */
+
+.who{
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 90;
+  font-family: var(--f);
+  animation: whoIn .9s cubic-bezier(.16,1,.3,1) .5s both;
+}
+@keyframes whoIn{ from{ opacity:0; transform:translateY(-10px); } to{ opacity:1; transform:none; } }
+
+@media (prefers-reduced-motion: reduce){
+  .who{ animation: none; }
+}
+
+.who-btn{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 24px;
+  border: 1px solid var(--stroke);
+  background: linear-gradient(180deg, var(--glass), var(--glass-2));
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  box-shadow: var(--lift);
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .84rem;
+  transition: border-color .25s ease, transform .25s cubic-bezier(.16,1,.3,1);
+}
+.who-btn:hover{ border-color: var(--stroke-2); transform: translateY(-1px); }
+.who-name{ font-weight: 500; letter-spacing: -.01em; }
+.who-caret{ color: var(--faint); transition: transform .3s cubic-bezier(.16,1,.3,1); }
+.who.open .who-caret{ transform: rotate(180deg); }
+
+.who-dot{
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--m);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--a, var(--cyan));
+  box-shadow: 0 0 14px -2px color-mix(in srgb, var(--a, var(--cyan)) 65%, transparent);
+}
+
+/* ---------- menu ---------- */
+.who-menu{
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 268px;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid var(--stroke);
+  background: linear-gradient(180deg, var(--glass), var(--glass-2));
+  backdrop-filter: blur(26px) saturate(1.4);
+  -webkit-backdrop-filter: blur(26px) saturate(1.4);
+  box-shadow: var(--lift);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(.98);
+  transform-origin: top right;
+  transition: opacity .22s ease, transform .28s cubic-bezier(.16,1,.3,1), visibility .22s;
+}
+.who.open .who-menu{ opacity: 1; visibility: visible; transform: none; }
+
+.who-label{
+  display: block;
+  padding: 4px 8px 8px;
+  font-family: var(--m);
+  font-size: .58rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.who-item{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 8px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: none;
+  color: var(--text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease;
+}
+.who-item:hover{ background: color-mix(in srgb, var(--stroke) 45%, transparent); }
+.who-item.on{ border-color: var(--stroke); background: color-mix(in srgb, var(--stroke) 30%, transparent); }
+
+.who-text{ display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.who-text b{ font-size: .88rem; font-weight: 500; letter-spacing: -.01em; }
+.who-text i{
+  font-style: normal;
+  font-family: var(--m);
+  font-size: .62rem;
+  color: var(--faint);
+  letter-spacing: .02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.who-tick{ color: var(--cyan); font-size: .8rem; width: 12px; flex-shrink: 0; }
+
+.who-foot{
+  margin: 8px 8px 2px;
+  font-size: .64rem;
+  line-height: 1.55;
+  color: var(--faint);
+  border-top: 1px solid var(--stroke);
+  padding-top: 8px;
+}
+
+/* keep clear of the notch on small screens */
+@media (max-width: 620px){
+  .who{ top: 12px; right: 12px; }
+  .who-menu{ width: min(268px, calc(100vw - 24px)); }
+  .who-name{ display: none; }
+  .who-btn{ padding: 6px; }
+}

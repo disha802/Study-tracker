@@ -1,0 +1,16 @@
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Caches and build junk
+.cache/
+__pycache__/
+*.pyc
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
